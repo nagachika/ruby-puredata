@@ -1,4 +1,4 @@
-require "./puredata"
+require "puredata"
 
 PureData.start(:port => 20001) do |pd|
   # osc~ => *~ 0.1 => dac~
