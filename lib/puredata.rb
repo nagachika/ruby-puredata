@@ -96,20 +96,24 @@ class PureData
     @pid = nil
   end
 
+  def msg(*args)
+    @sock.puts(args.map{|l| l.to_s}.join(" ") + ";")
+  end
+
   def canvas(name, opt={})
     Canvas.new(self, name, opt)
   end
 
   def dsp=(flag)
     if flag
-      @sock.puts("pd dsp 1;")
+      self.msg("pd", "dsp", 1)
     else
-      @sock.puts("pd dsp 0;")
+      self.msg("pd", "dsp", 0)
     end
   end
 
-  def msg(*args)
-    @sock.puts(args.map{|l| l.to_s}.join(" ") + ";")
+  def quit
+    self.msg("pd", "quit")
   end
 
   class Canvas
