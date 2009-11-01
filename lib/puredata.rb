@@ -120,7 +120,7 @@ class PureData
     def initialize(pd, name, opt={})
       @pd = pd
       @name = name.dup
-      if /\.pd\Z/ =~ @name
+      unless /\.pd\Z/ =~ @name
         @name += ".pd"
       end
       @dir = File.expand_path(opt[:dir] || Dir.pwd)
@@ -133,8 +133,12 @@ class PureData
       pd.msg("#X", "pop", "1")
     end
 
+    def msg(*args)
+      @pd.msg("pd-#{@name}", *args)
+    end
+
     def obj(klass, *args)
-      @pd.msg("pd-#{@name}", "obj", 10, 10, klass, *args)
+      self.msg("obj", 10, 10, klass, *args)
       id = @pdobjid
       @pdobjid += 1
       cls = PureData.dispatch_object_class(klass, *args)
@@ -146,7 +150,24 @@ class PureData
       obj2, inletid = inlet
       oid1 = obj1.pdobjid
       oid2 = obj2.pdobjid
-      @pd.msg("pd-#{@name}", "connect", oid1, outletid, oid2, inletid)
+      self.msg("connect", oid1, outletid, oid2, inletid)
+    end
+
+    def save(path=nil)
+      if path
+        name = File.basename(path)
+        unless /\.pd\Z/ =~ name
+          name += ".pd"
+        end
+        dir = File.expand_path(File.dirname(path))
+      else
+        name = @name
+        dir = @dir
+      end
+      self.msg("savetofile", name, dir)
+      @name = name
+      @dir = dir
+      nil
     end
   end
 
