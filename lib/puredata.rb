@@ -25,7 +25,6 @@ class PureData
 
   def initialize(opt={})
     @portno = (opt[:port] || 10002).to_i
-    @pdobjid = 0
   end
 
   def fork_pd(opt={})
@@ -64,9 +63,6 @@ class PureData
   def start(opt={}, &blk)
     begin
       bind(opt)
-      @sock.puts "pd filename ruby ./;"
-      @sock.puts "#N canvas;"
-      @sock.puts "#X pop 1;"
       if blk
         blk.call(self)
       end
@@ -97,20 +93,8 @@ class PureData
     @pid = nil
   end
 
-  def obj(klass, *args)
-    @sock.puts("pd-ruby obj 10 10 #{klass} #{args.join(" ")};")
-    id = @pdobjid
-    @pdobjid += 1
-    cls = dispatch_object_class(klass, *args)
-    cls.new(self, id, klass, *args)
-  end
-
-  def connect(outlet, inlet)
-    obj1, outletid = outlet
-    obj2, inletid = inlet
-    oid1 = obj1.pdobjid
-    oid2 = obj2.pdobjid
-    @sock.puts("pd-ruby connect #{oid1} #{outletid} #{oid2} #{inletid};")
+  def canvas(name, opt={})
+    Canvas.new(self, name, opt)
   end
 
   def dsp=(flag)
@@ -125,9 +109,44 @@ class PureData
     @sock.puts(args.map{|l| l.to_s}.join(" ") + ";")
   end
 
-  class PdObject
-    def initialize(pd, pdobjid, name, *args)
+  class Canvas
+    def initialize(pd, name, opt={})
       @pd = pd
+      @name = name.dup
+      if /\.pd\Z/ =~ @name
+        @name += ".pd"
+      end
+      @dir = File.expand_path(opt[:dir] || Dir.pwd)
+      @pdobjid = 0
+      pos = opt[:position] || [100, 100]
+      size = opt[:size] || [300, 300]
+      font = opt[:font] || 10
+      pd.msg("pd", "filename", @name, @dir)
+      pd.msg("#N", "canvas #{pos.join(" ")} #{size.join(" ")} #{font}")
+      pd.msg("#X", "pop", "1")
+    end
+
+    def obj(klass, *args)
+      @pd.msg("pd-#{@name}", "obj", 10, 10, klass, *args)
+      id = @pdobjid
+      @pdobjid += 1
+      cls = PureData.dispatch_object_class(klass, *args)
+      cls.new(@pd, self, id, klass, *args)
+    end
+
+    def connect(outlet, inlet)
+      obj1, outletid = outlet
+      obj2, inletid = inlet
+      oid1 = obj1.pdobjid
+      oid2 = obj2.pdobjid
+      @pd.msg("pd-#{@name}", "connect", oid1, outletid, oid2, inletid)
+    end
+  end
+
+  class PdObject
+    def initialize(pd, canvas, pdobjid, name, *args)
+      @pd = pd
+      @canvas = canvas
       @pdobjid = pdobjid
       @name = name
       @args = args
@@ -168,7 +187,7 @@ class PureData
     end
   end
 
-  def dispatch_object_class(klass, *args)
+  def self.dispatch_object_class(klass, *args)
     tbl = {
       "osc~" => Osc,
       "dac~" => Dac,
