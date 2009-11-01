@@ -1,6 +1,6 @@
 require "puredata"
 
-PureData.start(:port => 20001) do |pd|
+PureData.start(:port => 10002) do |pd|
   # osc~ => *~ 0.1 => dac~
   osc = pd.obj("osc~", 440)
   mul = pd.obj("*~", 0.3)
