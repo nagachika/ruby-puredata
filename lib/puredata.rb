@@ -7,14 +7,14 @@ require "socket"
 class PureData
   case RUBY_PLATFORM
   when /darwin/
-    PD_APP_PATH="/Applications/Pd-extended.app/Contents/Resources/bin/pd"
+    @@pd_app_path = "/Applications/Pd-extended.app/Contents/Resources/bin/pd"
   else
-    raise "Sorry, Ruby/PureData now support only Mac OS X"
+    @@pd_app_path = nil
   end
 
   def self.start(opt={}, &blk)
     pd = self.new(opt)
-    p pd.fork_pd(opt)
+    pd.fork_pd(opt)
     pd.start(opt, &blk)
   end
 
@@ -28,7 +28,10 @@ class PureData
   end
 
   def fork_pd(opt={})
-    path = opt[:pd_app_path] || PD_APP_PATH
+    path = opt[:pd_app_path] || @@pd_app_path
+    if path.nil? or not File.executable?(path)
+      raise "option :pd_app_path (Pd-extended executable) must be specified."
+    end
     cmd = [
       path,
       "-nogui",
