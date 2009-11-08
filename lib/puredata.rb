@@ -104,6 +104,14 @@ class PureData
     Canvas.new(self, name, opt)
   end
 
+  def abstraction(name, opt={}, &blk)
+    if blk
+      Abstraction.create(self, name, opt, &blk)
+    else
+      Abstraction.new(self, name, opt)
+    end
+  end
+
   def dsp=(flag)
     if flag
       self.msg("pd", "dsp", 1)
@@ -168,6 +176,44 @@ class PureData
       @name = name
       @dir = dir
       nil
+    end
+  end
+
+  class Abstraction < Canvas
+    def initialize(pd, name, opt={})
+      super(pd, name, opt)
+      @inlets = []
+      @outlets = []
+    end
+
+    def inlet(idx=0)
+      @inlets[idx].outlet(0)
+    end
+
+    def outlet(idx=0)
+      @outlets[idx].inlet(0)
+    end
+
+    def add_inlet(audio=false)
+      if audio
+        @inlets << self.obj("inlet~")
+      else
+        @inlets << self.obj("inlet")
+      end
+    end
+
+    def add_outlet(audio=false)
+      if audio
+        @outlets << self.obj("outlet~")
+      else
+        @outlets << self.obj("outlet")
+      end
+    end
+
+    def self.create(pd, name, opt={})
+      abstract = self.new(pd, name, opt)
+      yield(abstract)
+      abstract.save
     end
   end
 
