@@ -7,15 +7,18 @@ Ruby library to manipulate PureData (Pd-extended) via socket.
 
 == Synopsis
 
-  require "ruby-puredata"
+  require "puredata"
 
   Pd.start do |pd|
-    osc = pd.obj("osc~", 440)
-    mul = pd.obj("*~", 0.1)
-    dac = pd.obj("dac~")
-    pd.connect(osc.outlet, mul.inlet)
-    pd.connect(mul.outlet, dac.left)
-    pd.connect(mul.outlet, dac.right)
+    canvas = pd.canvas("sample")
+
+    osc = canvas.obj("osc~", 440)
+    mul = canvas.obj("*~", 0.1)
+    dac = canvas.obj("dac~")
+    canvas.connect(osc.outlet, mul.inlet(0))
+    canvas.connect(mul.outlet, dac.left)
+    canvas.connect(mul.outlet, dac.right)
+
     pd.dsp = true
     sleep 5
     pd.dsp = false
@@ -24,7 +27,4 @@ Ruby library to manipulate PureData (Pd-extended) via socket.
 == Description
 
 == Installation
-
-== ToDo
-
 
