@@ -13,12 +13,6 @@ class PureData
   end
 
   def self.dispatch_object_class(klass, *args)
-    tbl = {
-      "osc~" => Osc,
-      "dac~" => Dac,
-      "r" => Receive,
-      "receive" => Receive,
-    }
     cls = @@pdclass[klass.to_s]
     cls ||= PdObject
     cls
