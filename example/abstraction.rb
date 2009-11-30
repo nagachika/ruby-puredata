@@ -1,6 +1,6 @@
 require "puredata"
 
-PureData.start(:port => 10002) do |pd|
+Pd.start do |pd|
   # create abstraction "osc440.pd"
   sample = pd.abstraction("osc440") do |abst|
     abst.add_outlet(true)

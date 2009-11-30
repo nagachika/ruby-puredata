@@ -1,6 +1,6 @@
 require "puredata"
 
-PureData.start(:port => 10002) do |pd|
+Pd.start do |pd|
   # create canvas "sample.pd"
   canvas = pd.canvas("sample")
 

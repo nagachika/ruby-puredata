@@ -9,7 +9,7 @@ Ruby library to manipulate PureData (Pd-extended) via socket.
 
   require "ruby-puredata"
 
-  PureData.start do |pd|
+  Pd.start do |pd|
     osc = pd.obj("osc~", 440)
     mul = pd.obj("*~", 0.1)
     dac = pd.obj("dac~")

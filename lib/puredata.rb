@@ -273,3 +273,5 @@ class PureData
     cls
   end
 end
+
+Pd = PureData
