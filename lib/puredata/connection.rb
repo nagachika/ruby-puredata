@@ -45,6 +45,7 @@ class PureData
       end
       check_canvas(other)
       @obj.canvas.connect(other, self)
+      other
     end
   end
 
@@ -59,6 +60,7 @@ class PureData
       end
       check_canvas(other)
       @obj.canvas.connect(self, other)
+      other
     end
   end
 
