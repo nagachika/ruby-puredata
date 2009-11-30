@@ -4,4 +4,5 @@
 
 require "puredata/pd"
 require "puredata/canvas"
+require "puredata/connection"
 require "puredata/pdobject"

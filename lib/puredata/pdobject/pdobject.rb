@@ -1,6 +1,6 @@
 # vim:encoding=utf-8
 #
-# Ruby/PureData early scrach version.
+# Ruby/PureData ojbect wrapper base class
 
 class PureData
 
@@ -26,14 +26,30 @@ class PureData
       @name = name
       @args = args
     end
-    attr_reader :pdobjid, :name
+    attr_reader :canvas, :pdobjid, :name
 
     def inlet(idx=0)
-      [self, idx]
+      Inlet.new(self, idx)
+    end
+
+    def inlet_pair
+      [self, 0]
     end
 
     def outlet(idx=0)
-      [self, idx]
+      Outlet.new(self, idx)
+    end
+
+    def outlet_pair
+      [self, 0]
+    end
+
+    def <<(other)
+      self.inlet << other
+    end
+
+    def >>(other)
+      self.outlet >> other
     end
   end
 end

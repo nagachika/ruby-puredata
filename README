@@ -15,9 +15,9 @@ Ruby library to manipulate PureData (Pd-extended) via socket.
     osc = canvas.obj("osc~", 440)
     mul = canvas.obj("*~", 0.1)
     dac = canvas.obj("dac~")
-    canvas.connect(osc.outlet, mul.inlet(0))
-    canvas.connect(mul.outlet, dac.left)
-    canvas.connect(mul.outlet, dac.right)
+    osc >> mul
+    dac.left << mul
+    dac.right << mul
 
     pd.dsp = true
     sleep 5

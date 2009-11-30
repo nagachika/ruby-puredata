@@ -6,15 +6,15 @@ Pd.start do |pd|
     abst.add_outlet(true)
     osc = abst.obj("osc~", 440)
     mul = abst.obj("*~", 0.3)
-    abst.connect(osc.outlet, mul.inlet)
-    abst.connect(mul.outlet, abst.outlet(0))
+    osc >> mul
+    abst.outlet(0) << mul
   end
 
   canvas = pd.canvas("sample")
   osc440 = canvas.obj("osc440")
   dac = canvas.obj("dac~")
-  canvas.connect(osc440.outlet, dac.left)
-  canvas.connect(osc440.outlet, dac.right)
+  osc440 >> dac.left
+  osc440 >> dac.right
   canvas.save
 
   pd.dsp = true

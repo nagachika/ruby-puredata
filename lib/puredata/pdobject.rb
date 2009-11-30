@@ -1,6 +1,6 @@
 # vim:encoding=utf-8
 #
-# Ruby/PureData early scrach version.
+# Ruby/PureData Pd object wrapper classes
 
 require "puredata/pdobject/pdobject"
 require "puredata/pdobject/osc"

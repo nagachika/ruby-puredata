@@ -1,6 +1,6 @@
 # vim:encoding=utf-8
 #
-# Ruby/PureData early scrach version.
+# Ruby/PureData Canvas, Abstraction class
 
 class PureData
   class Canvas
@@ -33,8 +33,8 @@ class PureData
     end
 
     def connect(outlet, inlet)
-      obj1, outletid = outlet
-      obj2, inletid = inlet
+      obj1, outletid = outlet.outlet_tuple
+      obj2, inletid = inlet.inlet_tuple
       oid1 = obj1.pdobjid
       oid2 = obj2.pdobjid
       self.msg("connect", oid1, outletid, oid2, inletid)
