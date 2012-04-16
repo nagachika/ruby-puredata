@@ -31,7 +31,7 @@ class PureData
 
   def fork_pd(opt={})
     path = opt[:pd_app_path] || @@pd_app_path
-    pd_params = opt[:pd_params]
+    pd_params = opt[:pd_params] || [] 
     if path.nil? or not File.executable?(path)
       raise "option :pd_app_path (Pd-extended executable) must be specified."
     end
