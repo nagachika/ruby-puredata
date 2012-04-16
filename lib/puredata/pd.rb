@@ -31,17 +31,19 @@ class PureData
 
   def fork_pd(opt={})
     path = opt[:pd_app_path] || @@pd_app_path
+    pd_params = opt[:pd_params] || [] 
     if path.nil? or not File.executable?(path)
       raise "option :pd_app_path (Pd-extended executable) must be specified."
     end
     cmd = [
       path,
+      pd_params,
       "-nogui",
       "-send", "pd filename ruby-pd.pd ./;",
       "-send", "#N canvas 10 10 200 200 10;",
       "-send", "#X pop 1;",
       "-send", "pd-ruby-pd.pd obj 50 50 netreceive #{@portno} 0 old;",
-    ]
+    ].flatten
     @pid = fork do
       Process.setsid
       exec(*cmd)
