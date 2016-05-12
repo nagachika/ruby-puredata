@@ -28,3 +28,6 @@ Ruby library to manipulate PureData (Pd-extended) via socket.
 
 == Installation
 
+== License
+
+This software is released under the MIT License, see LICENSE.txt.
